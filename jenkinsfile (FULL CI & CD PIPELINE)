@@ -46,10 +46,9 @@ pipeline {
                     // Fetch the current day of the month from the server clock
                     def currentDay = sh(script: "date +%d", returnStdout: true).trim()
                     
-                    // SIMULATION MODE: Set to "05" to force deployment today.
-                    // IMPORTANT: Change back to "25" before final submission!
-                    if (currentDay == "05") {
-                        echo "Today is the 5th! Simulation match. Proceeding with the production cluster deployment..."
+                    // STRICT ASSIGNMENT REQUIREMENT: Only allow deployment on the 25th
+                    if (currentDay == "25") {
+                        echo "Today is the 25th! Proceeding with the production cluster deployment..."
                     } else {
                         echo "Current day is ${currentDay}. Production deployments are blocked until the 25th. Skipping release step cleanly."
                         currentBuild.result = 'SUCCESS'
@@ -61,9 +60,8 @@ pipeline {
 
         stage('Deploy to Kubernetes') {
             when {
-                // SIMULATION MODE: Matches today's date to allow execution
-                // IMPORTANT: Change back to "25" before final submission!
-                expression { sh(script: "date +%d", returnStdout: true).trim() == "05" }
+                // Restricts this execution block strictly to the 25th of the month
+                expression { sh(script: "date +%d", returnStdout: true).trim() == "25" }
             }
             steps {
                 sh '''
