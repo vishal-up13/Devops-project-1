@@ -16,6 +16,6 @@ spec:
     spec:
       containers:
       - name: website-container
-        image: your-dockerhub-username/website-monolith:latest # Replace with your Docker Hub username
+        image: vishalup13/website-monolith:latest # Replace with your Docker Hub username
         ports:
         - containerPort: 80
