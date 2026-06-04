@@ -3,10 +3,10 @@ kind: Service
 metadata:
   name: website-service
 spec:
+  type: NodePort # Strict Assignment Requirement
   selector:
     app: website
-  type: NodePort
   ports:
     - port: 80
       targetPort: 80
-      nodePort: 30008 # ◄ FIXED: Matches your assignment rules perfectly
+      nodePort: 30008 # Strict Assignment Requirement
