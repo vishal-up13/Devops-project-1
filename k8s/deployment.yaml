@@ -13,9 +13,9 @@ spec:
     metadata:
       labels:
         app: website
-    spec:
+        spec:
       containers:
       - name: website-container
-        image: vishalup13/website-monolith:latest # Replace with your Docker Hub username
+        image: vishalup13/website-monolith:latest
         ports:
         - containerPort: 80
