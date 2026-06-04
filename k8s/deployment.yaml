@@ -1,9 +1,11 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: website-deployment
+  name: website-monolith
+  labels:
+    app: website
 spec:
-  replicas: 2
+  replicas: 2 # Strict Assignment Requirement
   selector:
     matchLabels:
       app: website
@@ -13,7 +15,7 @@ spec:
         app: website
     spec:
       containers:
-      - name: website
-        image: vishal4284/website:latest
+      - name: website-container
+        image: your-dockerhub-username/website-monolith:latest # Replace with your Docker Hub username
         ports:
         - containerPort: 80
