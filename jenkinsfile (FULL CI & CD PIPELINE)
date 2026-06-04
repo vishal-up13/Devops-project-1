@@ -2,11 +2,11 @@ pipeline {
     agent any
 
     environment {
+        // Keeps your exact Docker Hub username and repository path
         DOCKER_IMAGE = "vishal4284/website:latest"
     }
 
     stages {
-
         stage('Checkout Code') {
             steps {
                 git branch: 'master',
@@ -40,7 +40,30 @@ pipeline {
             }
         }
 
+        stage('Scheduled Release Gate') {
+            steps {
+                script {
+                    // Fetch the current day of the month from the server clock
+                    def currentDay = sh(script: "date +%d", returnStdout: true).trim()
+                    
+                    // MANDATORY CONFIGURATION: Change "25" to "05" if you want to test the deployment live right now!
+                    if (currentDay == "25") {
+                        echo "Today is the 25th! Proceeding with the production cluster deployment..."
+                    } else {
+                        echo "Current day is ${currentDay}. Production deployments are blocked until the 25th. Skipping release step cleanly."
+                        // Setting current build status to success but stopping early to prevent illegal release execution
+                        currentBuild.result = 'SUCCESS'
+                        return
+                    }
+                }
+            }
+        }
+
         stage('Deploy to Kubernetes') {
+            when {
+                // Ensures this stage strictly runs only on the 25th of the month
+                expression { sh(script: "date +%d", returnStdout: true).trim() == "25" }
+            }
             steps {
                 sh '''
                     kubectl apply -f k8s/deployment.yaml
