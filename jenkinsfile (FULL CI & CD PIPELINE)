@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        // Keeps your exact Docker Hub username and repository path
+        // Your exact Docker Hub username and repository path
         DOCKER_IMAGE = "vishal4284/website:latest"
     }
 
@@ -10,7 +10,7 @@ pipeline {
         stage('Checkout Code') {
             steps {
                 git branch: 'master',
-                    url: 'https://github.com/vishal-up13/Devops-project-1.git'
+                    url: 'https://github.com'
             }
         }
 
@@ -46,12 +46,12 @@ pipeline {
                     // Fetch the current day of the month from the server clock
                     def currentDay = sh(script: "date +%d", returnStdout: true).trim()
                     
-                    // MANDATORY CONFIGURATION: Change "25" to "05" if you want to test the deployment live right now!
-                    if (currentDay == "25") {
-                        echo "Today is the 25th! Proceeding with the production cluster deployment..."
+                    // SIMULATION MODE: Set to "05" to force deployment today.
+                    // IMPORTANT: Change back to "25" before final submission!
+                    if (currentDay == "05") {
+                        echo "Today is the 5th! Simulation match. Proceeding with the production cluster deployment..."
                     } else {
                         echo "Current day is ${currentDay}. Production deployments are blocked until the 25th. Skipping release step cleanly."
-                        // Setting current build status to success but stopping early to prevent illegal release execution
                         currentBuild.result = 'SUCCESS'
                         return
                     }
@@ -61,8 +61,9 @@ pipeline {
 
         stage('Deploy to Kubernetes') {
             when {
-                // Ensures this stage strictly runs only on the 25th of the month
-                expression { sh(script: "date +%d", returnStdout: true).trim() == "25" }
+                // SIMULATION MODE: Matches today's date to allow execution
+                // IMPORTANT: Change back to "25" before final submission!
+                expression { sh(script: "date +%d", returnStdout: true).trim() == "05" }
             }
             steps {
                 sh '''
